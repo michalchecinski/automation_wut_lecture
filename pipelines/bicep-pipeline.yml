@@ -1,0 +1,50 @@
+name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Build
+    displayName: 'Build'
+    dependsOn: []
+    jobs:
+      - job: PublishInfra
+        displayName: 'Publish Bicep infrastructure folder'
+        steps:
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: "src/bicep"
+            artifactName: "infra"
+
+  - stage: DeployTest
+    displayName: 'Deploy test environment'
+    dependsOn:
+      - Build
+    jobs:
+      - deployment: Deploy
+        displayName: 'Deploy Azure resources to test'
+        environment: test
+        variables:
+          azureServiceConnection: mch-wut-demo
+          resourceGroupName: mch-wut-demo-rg
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: ${{ variables.azureServiceConnection }}
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      az deployment group create \
+                        --resource-group ${{ variables.resourceGroupName }} \
+                        --template-file $(Pipeline.Workspace)/infra/main.bicep \
+                        --parameters @$(Pipeline.Workspace)/infra/main.parameters.json
+                  displayName: 'Deploy Azure resources to resource group ${{ variables.resourceGroupName }}'

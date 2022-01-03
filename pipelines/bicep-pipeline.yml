@@ -43,6 +43,8 @@ stages:
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
                     inlineScript: |
+                      az group create --resource-group ${{ variables.resourceGroupName }} -l westeurope
+
                       az deployment group create \
                         --resource-group ${{ variables.resourceGroupName }} \
                         --template-file $(Pipeline.Workspace)/infra/main.bicep \

@@ -1,4 +1,9 @@
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
 name: Azure Bicep deploy
 jobs:
   build-and-deploy:

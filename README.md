@@ -23,3 +23,7 @@ Azure DevOps project link: https://dev.azure.com/michalchecinski/mch-wut-demo
 - https://apiumhub.com/tech-blog-barcelona/comparing-iac-tools-for-azure-terraform-and-bicep/
 - https://www.thorsten-hans.com/bicep-and-terraform-compared/
 
+
+## Github actions bicep
+
+https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-github-actions?tabs=CLI
